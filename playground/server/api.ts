@@ -1,6 +1,5 @@
 import { Elysia } from 'elysia'
 import type { NitroApp } from 'nitropack'
-import { node } from '@elysiajs/node'
 
 // TODO Export these as utility
 
@@ -8,15 +7,12 @@ interface ElysiaFactoryContext {
   nitroApp: NitroApp
 }
 
-type ElysiaFactoryFn = (ctx: ElysiaFactoryContext) => Elysia | Promise<Elysia>
+type ElysiaFactoryFn<T extends Elysia> = (ctx: ElysiaFactoryContext) => T | Promise<T>
 
-const defineElysiaApp = (fn: ElysiaFactoryFn) => fn
+const defineElysiaApp = <T extends Elysia>(fn: ElysiaFactoryFn<T>) => fn
 
 export default defineElysiaApp(async () => {
-  // TODO We can lift this up to the Nitro instance itself
-  const isBun = Boolean(process.versions.bun)
-
-  return new Elysia({ adapter: isBun ? undefined : node() })
+  return new Elysia()
     .get('/hello', () => 'Hello world!')
     .get('/api-hello', () => {
       return {
