@@ -1,10 +1,24 @@
+import fsp from 'node:fs/promises'
 import { defineNuxtModule, createResolver, addServerPlugin, addTemplate } from '@nuxt/kit'
-import ejs from 'ejs'
 import pkg from '../package.json'
 
 export interface ModuleOptions {
   module: string
   path: string
+}
+
+async function renderTemplate(templatePath: string, data: Record<string, string>) {
+  const template = await fsp.readFile(templatePath, { encoding: 'utf-8' })
+  return template.replaceAll(/<%\s*\w+\s*%>/g, (pattern) => {
+    const key = pattern.slice(2, -2).trim()
+
+    const value = data[key]
+    if (typeof value === 'undefined') {
+      throw new TypeError(`Cannot find value '${key}' in template data`)
+    }
+
+    return value
+  })
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -24,11 +38,10 @@ export default defineNuxtModule<ModuleOptions>({
       filename: './nuxt-elysia/server-plugin.ts',
       async getContents() {
         const templatePath = resolver.resolve('./runtime/templates/server-plugin.ejs')
-        const templateData = {
+        return renderTemplate(templatePath, {
           module: _options.module,
           path: _options.path,
-        }
-        return ejs.renderFile(templatePath, templateData)
+        })
       },
       write: true,
     })

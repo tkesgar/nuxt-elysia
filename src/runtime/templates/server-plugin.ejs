@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import createElysiaApp from '<%= module %>'
+import createElysiaApp from '<% module %>'
 
 type ElysiaApp = Awaited<ReturnType<typeof createElysiaApp>>
 
@@ -12,7 +12,7 @@ declare module 'h3' {
 // https://bun.sh/guides/util/detect-bun
 const IS_BUN = Boolean(process.versions.bun)
 
-const APP_PATH = '<%= path %>'
+const APP_PATH = '<% path %>'
 
 export default defineNitroPlugin(async (nitroApp) => {
   const app = await createElysiaApp({
@@ -22,7 +22,6 @@ export default defineNitroPlugin(async (nitroApp) => {
   nitroApp.hooks.hook('request', (event) => {
     event.context._elysiaApp = app
   })
-
 
   const wrappedApp = new Elysia({
     prefix: APP_PATH,
