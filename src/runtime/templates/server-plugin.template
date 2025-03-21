@@ -1,7 +1,7 @@
 import Elysia from 'elysia'
 import createElysiaApp from '<% module %>'
 
-const APP_PATH = '<% path %>'
+const isBun = typeof Bun !== "undefined"
 
 export default defineNitroPlugin(async (nitroApp) => {
   const app = await createElysiaApp({
@@ -12,18 +12,26 @@ export default defineNitroPlugin(async (nitroApp) => {
     event.context._elysiaApp = app
   })
 
-  if (APP_PATH) {
-    const wrappedApp = new Elysia({ prefix: APP_PATH }).use(app)
+  const appPath = '<% path %>'
+  if (appPath) {
+    const wrappedApp = new Elysia({ prefix: appPath }).use(app)
+
+    // Fix missing Content-Type header when running the app in Bun
+    if (isBun) {
+      wrappedApp.onAfterHandle(({ response, set }) => {
+        if (typeof response === 'string') {
+          set.headers['content-type'] = 'text/plain;charset=UTF-8'
+        }
+      })
+    }
 
     nitroApp.h3App.stack.unshift({
-      route: APP_PATH,
+      route: appPath,
       // TODO See if Elysia can be configured to not return a response
       // If the handle does not return a response, h3 will move to the next route in stack.
       // If we can do this then we can register Elysia as '/' route
       // https://h3.unjs.io/guide/app#registering-event-handlers
       handler: fromWebHandler(wrappedApp.handle),
     })
-
-    console.log(nitroApp.h3App.stack)
   }
 })
