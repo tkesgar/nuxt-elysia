@@ -1,9 +1,6 @@
 import Elysia from 'elysia'
 import createElysiaApp from '<% module %>'
 
-// https://bun.sh/guides/util/detect-bun
-const IS_BUN = Boolean(process.versions.bun)
-
 const APP_PATH = '<% path %>'
 
 export default defineNitroPlugin(async (nitroApp) => {
@@ -16,10 +13,7 @@ export default defineNitroPlugin(async (nitroApp) => {
   })
 
   if (APP_PATH) {
-    const wrappedApp = new Elysia({
-      prefix: APP_PATH,
-      ...(IS_BUN && { adapter: (await import('@elysiajs/node')).node() }),
-    }).use(app)
+    const wrappedApp = new Elysia({ prefix: APP_PATH }).use(app)
 
     nitroApp.h3App.stack.unshift({
       route: APP_PATH,
@@ -29,5 +23,7 @@ export default defineNitroPlugin(async (nitroApp) => {
       // https://h3.unjs.io/guide/app#registering-event-handlers
       handler: fromWebHandler(wrappedApp.handle),
     })
+
+    console.log(nitroApp.h3App.stack)
   }
 })
