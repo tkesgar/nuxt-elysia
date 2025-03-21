@@ -78,16 +78,6 @@ export interface ModuleOptions {
    * Default: `true`
    */
   treaty: boolean
-  /**
-   * Specifies how the Elysia app is mounted. Currently there are several
-   * options available:
-   *
-   * - `stack`: mount the app as the first handler in the internal H3 app stack.
-   * - `route`: mount the app as a H3 route.
-   *
-   * Default: `stack`
-   */
-  mountType: 'stack' | 'handler'
 }
 
 async function renderTemplate(templatePath: string, data: Record<string, string>) {
