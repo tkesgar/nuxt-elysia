@@ -1,19 +1,37 @@
-import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addServerPlugin, addTemplate } from '@nuxt/kit'
+import ejs from 'ejs'
+import pkg from '../package.json'
 
-// Module options TypeScript interface definition
-export interface ModuleOptions {}
+export interface ModuleOptions {
+  module: string
+  path: string
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'my-module',
-    configKey: 'myModule',
+    name: pkg.name,
+    version: pkg.version,
+    configKey: 'nuxtElysia',
   },
-  // Default configuration options of the Nuxt module
-  defaults: {},
-  setup(_options, _nuxt) {
+  defaults: {
+    module: '../../api',
+    path: '/_api',
+  },
+  async setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
-    addPlugin(resolver.resolve('./runtime/plugin'))
+    const tmpl = addTemplate({
+      filename: './nuxt-elysia/server-plugin.ts',
+      async getContents() {
+        const templatePath = resolver.resolve('./runtime/templates/server-plugin.ejs')
+        const templateData = {
+          module: _options.module,
+          path: _options.path,
+        }
+        return ejs.renderFile(templatePath, templateData)
+      },
+      write: true,
+    })
+    addServerPlugin(tmpl.dst)
   },
 })

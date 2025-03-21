@@ -34,7 +34,8 @@
     "prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.16.1"
+    "@nuxt/kit": "^3.16.1",
+    "ejs": "^3.1.10"
   },
   "peerDependencies": {
     "elysia": "^1",
@@ -47,6 +48,7 @@
     "@nuxt/module-builder": "^0.8.4",
     "@nuxt/schema": "^3.16.1",
     "@nuxt/test-utils": "^3.17.2",
+    "@types/ejs": "^3.1.5",
     "@types/node": "latest",
     "changelogen": "^0.6.1",
     "eslint": "^9.22.0",
