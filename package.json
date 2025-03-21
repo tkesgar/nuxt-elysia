@@ -42,6 +42,7 @@
     "@elysiajs/eden": "^1"
   },
   "devDependencies": {
+    "@elysiajs/swagger": "^1.2.2",
     "@nuxt/devtools": "^2.3.1",
     "@nuxt/eslint-config": "^1.2.0",
     "@nuxt/module-builder": "^0.8.4",

@@ -1,4 +1,5 @@
 import { Elysia, t } from 'elysia'
+import { swagger } from '@elysiajs/swagger'
 import { defineElysiaApp } from '../../src/runtime/utils'
 
 export default defineElysiaApp(async () => {
@@ -21,6 +22,7 @@ export default defineElysiaApp(async () => {
         message: t.String(),
       }),
     })
+    .use(swagger())
 
   return app
 })

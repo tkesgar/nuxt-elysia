@@ -1,14 +1,6 @@
 import Elysia from 'elysia'
 import createElysiaApp from '<% module %>'
 
-type ElysiaApp = Awaited<ReturnType<typeof createElysiaApp>>
-
-declare module 'h3' {
-  interface H3EventContext {
-    _elysiaApp: ElysiaApp
-  }
-}
-
 // https://bun.sh/guides/util/detect-bun
 const IS_BUN = Boolean(process.versions.bun)
 

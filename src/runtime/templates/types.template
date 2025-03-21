@@ -1,0 +1,9 @@
+import createElysiaApp from '<% module %>'
+
+type ElysiaApp = Awaited<ReturnType<typeof createElysiaApp>>
+
+declare module 'h3' {
+  interface H3EventContext {
+    _elysiaApp: ElysiaApp
+  }
+}
