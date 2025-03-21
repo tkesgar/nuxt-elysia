@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import createElysiaApp from '../api'
+import createElysiaApp from '../../api'
 
 type ElysiaApp = Awaited<ReturnType<typeof createElysiaApp>>
 
