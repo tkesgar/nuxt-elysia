@@ -3,10 +3,81 @@ import { defineNuxtModule, createResolver, addServerPlugin, addPlugin, addTempla
 import pkg from '../package.json'
 
 export interface ModuleOptions {
+  /**
+   * Specifies the module that exports a function that returns Elysia app as
+   * its default export:
+   *
+   * ```ts
+   * export default () => {
+   *   return new Elysia()
+   * }
+   * ```
+   *
+   * Use `defineElysiaApp` utility to help with typing the function:
+   *
+   * ```ts
+   * export default defineElysiaApp(({ nitroApp }) => {
+   *   // ...
+   * })
+   * ```
+   *
+   * The default value `~~/api` is a Nuxt default alias for `/api` path in
+   * the Nuxt project root, which may resolve to `<root>/api.ts` or
+   * `<root>/api/index.ts`.
+   *
+   * Default: `~~/api`
+   */
   module: string
+  /**
+   * Specifies the path to mount the Elysia app.
+   *
+   * The default value is `/_api`. You can change this value to avoid conflict
+   * with other modules or using specific paths, e.g. `/v1/api`.
+   *
+   * Note that Elysia instance will take over all requests on the specified
+   * path. Therefore, avoid using commonly used paths such as `/api`.
+   *
+   * To skip mounting the Elysia app, set this value to empty string (`''`).
+   * You can still access the Elysia instance via the event context, for example
+   * in API routes:
+   *
+   * ```ts
+   * // server/api/custom/[...slug].ts
+   *
+   * export default defineEventHandler(event => {
+   *   event.context._elysiaApp // Elysia app instance
+   * })
+   * ```
+   *
+   * Note that disabling mounting the Elysia app will also disable the Eden
+   * Treaty plugin on client-side.
+   *
+   * Default: `/_api`
+   */
   path: string
+  /**
+   * Whether to enable Eden Treaty plugin.
+   *
+   * The plugin will mount Eden Treaty at `$api`. Additional configuration for
+   * the treaty instance can be specified in `app.config.ts`:
+   *
+   * ```ts
+   * export default defineAppConfig({
+   *   treatyConfig: {
+   *     // ...
+   *   }
+   * })
+   * ```
+   *
+   * See {@link https://elysiajs.com/eden/overview | Eden Treaty documentation}
+   * for more details.
+   *
+   * You can disable the plugin if you do not intend to use Eden Treaty, or use
+   * a custom Eden Treaty.
+   *
+   * Default: `true`
+   */
   treaty: boolean
-  append?: boolean
 }
 
 async function renderTemplate(templatePath: string, data: Record<string, string>) {
@@ -67,19 +138,18 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Register client plugin
-    if (_options.treaty) {
+    if (_options.path && _options.treaty) {
       const tmpl = addTemplate({
         filename: './nuxt-elysia/client-plugin.ts',
         async getContents() {
           const templatePath = resolver.resolve('./runtime/templates/client-plugin.template')
           return renderTemplate(templatePath, {
-            module: _options.module,
             path: _options.path.slice(1),
           })
         },
         write: true,
       })
-      addPlugin(tmpl.dst, { append: _options.append })
+      addPlugin(tmpl.dst)
     }
   },
 })

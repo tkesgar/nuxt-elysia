@@ -1,8 +1,8 @@
 import { treaty, type Treaty } from '@elysiajs/eden'
 
 declare module 'nuxt/schema' {
-  interface AppConfig {
-    /** Additional Eden Treaty configuration */
+  interface AppConfigInput {
+    /** Additional configuration for `$api` (Eden Treaty) */
     treatyConfig?: Treaty.Config
   }
 }
