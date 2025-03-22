@@ -1,6 +1,6 @@
 import fsp from 'node:fs/promises'
 import { defineNuxtModule, createResolver, addServerPlugin, addPlugin, addTemplate, addTypeTemplate } from '@nuxt/kit'
-import pkg from '../package.json'
+import { name, version } from '../package.json'
 
 export interface ModuleOptions {
   /**
@@ -8,17 +8,11 @@ export interface ModuleOptions {
    * its default export:
    *
    * ```ts
-   * export default () => {
+   * import type { NitroApp } from 'nitropack'
+   *
+   * export default ({ nitroApp }: { nitroApp: NitroApp }) => {
    *   return new Elysia()
    * }
-   * ```
-   *
-   * Use `defineElysiaApp` utility to help with typing the function:
-   *
-   * ```ts
-   * export default defineElysiaApp(({ nitroApp }) => {
-   *   // ...
-   * })
    * ```
    *
    * The default value `~~/api` is a Nuxt default alias for `/api` path in
@@ -96,8 +90,8 @@ async function renderTemplate(templatePath: string, data: Record<string, string>
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: pkg.name,
-    version: pkg.version,
+    name,
+    version,
     configKey: 'nuxtElysia',
   },
   defaults: {

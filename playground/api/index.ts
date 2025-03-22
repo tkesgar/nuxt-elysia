@@ -1,8 +1,7 @@
 import { Elysia, t } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
-import { defineElysiaApp } from '../../src/runtime/utils'
 
-export default defineElysiaApp(async () => {
+export default async () => {
   // NOTE: For some reason Elysia cannot infer the returned type, so we need to
   // specify the type in response
   const app = new Elysia()
@@ -25,4 +24,4 @@ export default defineElysiaApp(async () => {
     .use(swagger())
 
   return app
-})
+}
