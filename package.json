@@ -37,7 +37,6 @@
   },
   "peerDependencies": {
     "elysia": "^1",
-    "@elysiajs/node": "^1",
     "@elysiajs/eden": "^1"
   },
   "devDependencies": {
