@@ -1,5 +1,7 @@
 import Elysia from 'elysia'
 import createElysiaApp from '<% module %>'
+import { defineNitroPlugin } from 'nitropack/runtime'
+import { fromWebHandler } from 'h3'
 
 const isBun = typeof Bun !== "undefined"
 
