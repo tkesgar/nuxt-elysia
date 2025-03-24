@@ -4,19 +4,10 @@ import { name, version } from '../package.json'
 
 export interface ModuleOptions {
   /**
-   * Specifies the module that exports a function that returns Elysia app as
-   * its default export:
-   *
-   * ```ts
-   * import type { NitroApp } from 'nitropack'
-   *
-   * export default ({ nitroApp }: { nitroApp: NitroApp }) => {
-   *   return new Elysia()
-   * }
-   * ```
+   * Specifies the module that exports the Elysia app factory function.
    *
    * The default value `~~/api` is a Nuxt default alias for `/api` path in
-   * the Nuxt project root, which may resolve to `<root>/api.ts` or
+   * the Nuxt project root. This alias may resolve to `<root>/api.ts` or
    * `<root>/api/index.ts`.
    *
    * Default: `~~/api`
@@ -25,49 +16,13 @@ export interface ModuleOptions {
   /**
    * Specifies the path to mount the Elysia app.
    *
-   * The default value is `/_api`. You can change this value to avoid conflict
-   * with other modules or using specific paths, e.g. `/v1/api`.
-   *
-   * Note that Elysia instance will take over all requests on the specified
-   * path. Therefore, avoid using commonly used paths such as `/api`.
-   *
-   * To skip mounting the Elysia app, set this value to empty string (`''`).
-   * You can still access the Elysia instance via the event context, for example
-   * in API routes:
-   *
-   * ```ts
-   * // server/api/custom/[...slug].ts
-   *
-   * export default defineEventHandler(event => {
-   *   event.context._elysiaApp // Elysia app instance
-   * })
-   * ```
-   *
-   * Note that disabling mounting the Elysia app will also disable the Eden
-   * Treaty plugin on client-side.
+   * Set to empty string (`''`) to disable mounting the Elysia app.
    *
    * Default: `/_api`
    */
   path: string
   /**
    * Whether to enable Eden Treaty plugin.
-   *
-   * The plugin will mount Eden Treaty at `$api`. Additional configuration for
-   * the treaty instance can be specified in `app.config.ts`:
-   *
-   * ```ts
-   * export default defineAppConfig({
-   *   treatyConfig: {
-   *     // ...
-   *   }
-   * })
-   * ```
-   *
-   * See {@link https://elysiajs.com/eden/overview | Eden Treaty documentation}
-   * for more details.
-   *
-   * You can disable the plugin if you do not intend to use Eden Treaty, or use
-   * a custom Eden Treaty.
    *
    * Default: `true`
    */

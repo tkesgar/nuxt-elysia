@@ -1,84 +1,213 @@
-<!--
-Get your module up and running quickly.
+# nuxt-elysia
 
-Find and replace all on all files (CMD+SHIFT+F):
-- Name: My Module
-- Package name: my-module
-- Description: My new Nuxt module
--->
-
-# My Module
-
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![License][license-src]][license-href]
-[![Nuxt][nuxt-src]][nuxt-href]
-
-My new Nuxt module for doing amazing things.
-
-- [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/my-module?file=playground%2Fapp.vue) -->
-<!-- - [📖 &nbsp;Documentation](https://example.com) -->
+> Use Elysia app in Nuxt
 
 ## Features
 
-<!-- Highlight some of the features your module provide here -->
-- ⛰ &nbsp;Foo
-- 🚠 &nbsp;Bar
-- 🌲 &nbsp;Baz
+- [v] Mount Elysia in Nuxt in a specific path
+- [v] Eden Treaty integration
+  - [v] End-to-end type safety
+  - [v] Isomorphic client: works in both server and client side
+- [v] Works in both Node.js and Bun
 
-## Quick Setup
+## Setup
 
-Install the module to your Nuxt application with one command:
+Install the package:
 
-```bash
-npx nuxi module add my-module
+```
+# Bun
+bun add nuxt-elysia -D
+bun add elysia @elysiajs/eden
+
+# NPM
+npm install nuxt-elysia --save-dev
+npm install elysia @elysiajs/eden
 ```
 
-That's it! You can now use My Module in your Nuxt app ✨
+> `nuxt-elysia` declares `elysia` and `@elysiajs/eden` as peer dependency, which
+> will be automatically installed by most package managers (Bun, NPM, PNPM).
+> However, by explicitly declaring the peer dependency you will be able to
+> control the specific Elysia and Eden Treaty version to use.
 
+> `nuxt-elysia` should be only installed as `devDependency`, since it is only
+> necessary during development and build. It is not needed in production
+> environment.
 
-## Contribution
+Add to modules list in `nuxt.config.ts`:
 
-<details>
-  <summary>Local development</summary>
+```ts
+export default defineNuxtConfig({
+  modules: [
+    // ...
+	'nuxt-elysia'
+  ]
+})
+```
+
+Create `api.ts` in the project root:
+
+```ts
+export default () => new Elysia()
+  .get('/hello', () => ({ message: 'Hello world!' })
+```
+
+Use in Vue app:
+
+```vue
+<template>
+  <div>
+    <p>{{ helloMessage }}</p>
+  </div>
+</template>
+<script setup lang="ts">
+const { $api } = useNuxtApp()
+
+const { data: helloMessage } = await useAsyncData(async () => {
+  const { data, error } = await $api.hello.get()
   
-  ```bash
-  # Install dependencies
-  npm install
+  if (error) {
+    throw new Error('Unknown error')
+  }
   
-  # Generate type stubs
-  npm run dev:prepare
-  
-  # Develop with the playground
-  npm run dev
-  
-  # Build the playground
-  npm run dev:build
-  
-  # Run ESLint
-  npm run lint
-  
-  # Run Vitest
-  npm run test
-  npm run test:watch
-  
-  # Release new version
-  npm run release
-  ```
+  return data.message
+})
+</script>
+```
 
-</details>
+## Module options
 
+<!-- Copy from ModuleOptions in src/module.ts -->
+```ts
+export interface ModuleOptions {
+  /**
+   * Specifies the module that exports the Elysia app factory function.
+   *
+   * The default value `~~/api` is a Nuxt default alias for `/api` path in
+   * the Nuxt project root. This alias may resolve to `<root>/api.ts` or
+   * `<root>/api/index.ts`.
+   *
+   * Default: `~~/api`
+   */
+  module: string
+  /**
+   * Specifies the path to mount the Elysia app.
+   *
+   * Set to empty string (`''`) to disable mounting the Elysia app.
+   *
+   * Default: `/_api`
+   */
+  path: string
+  /**
+   * Whether to enable Eden Treaty plugin.
+   *
+   * Default: `true`
+   */
+  treaty: boolean
+}
+```
 
-<!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/my-module/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/my-module
+## Notes
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/my-module
+### Running the application in Bun
 
-[license-src]: https://img.shields.io/npm/l/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/my-module
+The Elysia app is mounted as request handler for the Nitro application stack,
+so you can use Nuxt Elysia without Bun.
 
-[nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
-[nuxt-href]: https://nuxt.com
+If you want to use Bun-specific APIs (`Bun.*`), you will need to run Nuxt using
+Bun. Bun [respects node shebang][bun-bun-flag], meaning that `nuxt dev` actually
+uses Node.js (if both Node.js and Bun are available). Therefore, you need to add
+`--bun` flag to override this behavior:
+
+```json
+{
+  "scripts": {
+    "dev": "bun --bun dev",
+    "build": "bun --bun build",
+    "preview": "bun --bun preview"
+  }
+}
+```
+
+However, if you do this you will also need to use [Nitro Bun preset][nitro-bun-preset]
+to build the app. This is because the default `node-server` preset will fail to
+bundle Elysia, since Elysia has Bun-specific exports that will not be handled
+properly by the default preset:
+
+```json
+{
+  "exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"bun": "./dist/bun/index.js",
+			"import": "./dist/index.mjs",
+			"require": "./dist/cjs/index.js"
+		}
+  }
+}
+```
+
+Furthermore, you will also need to include the root `node_modules` in your
+deployment, as opposed to only `.output` directory. This is because the
+Bun-specific packages will be read from the root directory:
+
+```
+<root>
+├── .output
+├── node_modules
+├── package.json
+└── bun.lock
+```
+
+If you use Docker to containerize your app, you can use this Dockerfile as
+reference:
+
+```Dockerfile
+# Use Bun base image
+FROM oven/bun:1-slim
+
+# Set working directory
+WORKDIR /app
+
+# Set NODE_ENV=production (prevents development-specific logs from some
+# packages such as vue-router)
+ENV NODE_ENV=production
+
+# Copy .output directory generated by Nuxt
+# Make sure to run `nuxt build` before building the container image
+COPY .output .output
+
+# Copy package.json and bun.lock, then run `bun install --production`
+# to install only production dependencies.
+COPY package.json bun.lock ./
+RUN bun install --production
+
+# Set working user
+USER bun
+
+# Expose port 3000 (default Nitro port)
+EXPOSE 3000
+
+# Set image entrypoint (run the generated server module using Bun)
+ENTRYPOINT [ "bun", "./.output/server/index.mjs" ]
+```
+
+[bun-bun-flag]: https://bun.sh/docs/cli/run#bun
+[nitro-bun-preset]: https://nitro.build/deploy/runtimes/bun
+
+## Contributing
+
+Requirements:
+
+- Bun
+- Node.js
+
+Development steps:
+
+1. Clone this repository
+2. Install dependencies: `bun install`
+3. Stub modules for development: `bun dev:prepare`
+4. Run playground in development mode: `bun dev`
+
+## License
+
+[MIT License](./LICENSE)
