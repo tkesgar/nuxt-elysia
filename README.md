@@ -108,6 +108,71 @@ export interface ModuleOptions {
 
 ## Notes
 
+### Known quirks
+
+Because nuxt-elysia mounts Elysia as a handler for H3 application instead of
+directly handling the HTTP request, there may be several quirks in the
+
+Our goal is for the following implementations to work the same ,i.e. returning
+matching HTTP headers and responses:
+
+1. Elysia app run directly in Bun server
+2. Elysia app internal request (via `Elysia.handle`)
+3. Elysia app external request (via `/_api` endpoint)
+
+You can check `server-plugin.ts` generated from `server-plugin.template` for
+the list of currently implemented workarounds.
+
+### `module` option
+
+You can use any aliases from Nuxt in `module` option.
+
+The default value for `module` is `~~/api`, which is a Nuxt default alias
+for `<root>/api` path in the Nuxt project root. The path may resolve to
+`<root>/api.ts` or `<root>/api/index.ts`.
+
+Other paths you can use:
+
+```ts
+export default defineNuxtConfig({
+  nuxtElysia: {
+    // Custom alias
+    module: '#api',
+    // Module in other package
+    module: '@my-org/my-package',
+    // Absolute path
+    module: '/absolute/path/to/module',
+    // Generated module (from other Nuxt module)
+    module: '~~/.nuxt/my-generated-module',
+  }
+})
+```
+
+### Only mount in development
+
+```ts
+export default defineNuxtConfig({
+  nuxtElysia: {
+    module: '@my-org/my-server-app',
+    path: import.meta.dev ? '/_api' : ''
+  }
+})
+```
+
+This is useful if you only want to mount the Elysia app in development setup
+and uses a reverse proxy to serve the app in separate instance. For example,
+using Nginx:
+
+```
+location / {
+  proxy_pass http://my-nuxt-app;
+}
+
+location /_api {
+  proxy_pass http://my-api-service;
+}
+```
+
 ### Running the application in Bun
 
 The Elysia app is mounted as request handler for the Nitro application stack,
