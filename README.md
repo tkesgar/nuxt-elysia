@@ -35,7 +35,7 @@ npm install nuxt-elysia --save-dev
 npm install elysia @elysiajs/eden
 ```
 
-> See [Running in Bun][#running-the-application-in-bun] below on how to run Nuxt
+> See [Running in Bun](#running-the-application-in-bun) below on how to run Nuxt
 > applications in Bun instead of Node.js.
 
 > `nuxt-elysia` declares `elysia` and `@elysiajs/eden` as peer dependency, which
@@ -53,7 +53,7 @@ Add to modules list in `nuxt.config.ts`:
 export default defineNuxtConfig({
   modules: [
     // ...
-	'nuxt-elysia'
+	  'nuxt-elysia'
   ]
 })
 ```
@@ -79,8 +79,13 @@ const { $api } = useNuxtApp()
 const { data: helloMessage } = await useAsyncData(async () => {
   const { data, error } = await $api.hello.get()
   
+  // Due to Eden Treaty's type safety, you need to handle if `error` is truthy:
+  // https://elysiajs.com/eden/treaty/response.html#response
+  //
+  // Throwing an error here will make it available in the `useAsyncData` error.
+  //
   if (error) {
-    throw new Error('Unknown error')
+    throw new Error('Failed to call API')
   }
   
   return data.message
@@ -132,14 +137,15 @@ export interface ModuleOptions {
    */
   fixBunPlainTextResponse: boolean
   /**
-   * Provides the list of request headers to be sent to the Elysia app.
+   * Provides the list of request headers to be sent to the Elysia app on
+   * server-side requests.
    *
    * The default value is `['Cookie']`, which will pass all cookies sent by
    * the browser to Elysia app. Set to `false` to disable passing any headers.
    *
-   * Default: ['Cookie']
+   * Default: `['Cookie']`
    */
-  treatyRequestHeaders: string[]
+  treatyRequestHeaders: string[] | false
 }
 ```
 
@@ -151,7 +157,7 @@ Because nuxt-elysia mounts Elysia as a handler for H3 application instead of
 directly handling the HTTP request, there may be several quirks that we need to
 fix with additional wrappers and transforms. You can check `server-plugin.ts`
 generated from `server-plugin.template` for the list of currently implemented
-workarounds:
+workarounds.
 
 Our goal is to ensure the same results between mounting the Elysia app and
 running the Elysia app as separate server (directly in Bun or running in Node.js
@@ -184,6 +190,9 @@ export default defineNuxtConfig({
 
 ### Only mount in development
 
+To only mount the app in development, use `import.meta.dev` (which will be
+`false` when building to production):
+
 ```ts
 export default defineNuxtConfig({
   nuxtElysia: {
@@ -198,12 +207,12 @@ and uses a reverse proxy to serve the app in separate instance. For example,
 using Nginx:
 
 ```
-location / {
-  proxy_pass http://my-nuxt-app;
-}
-
 location /_api {
   proxy_pass http://my-api-service;
+}
+
+location / {
+  proxy_pass http://my-nuxt-app;
 }
 ```
 
@@ -227,7 +236,9 @@ uses Node.js (if both Node.js and Bun are available). Therefore, you need to add
 }
 ```
 
-However, if you do this you will also need to use [Nitro Bun preset][nitro-bun-preset]
+> Note that you only need to do this if you have both Node.js and Bun installed.
+
+If you do this you will also need to use [Nitro Bun preset][nitro-bun-preset]
 to build the app. This is because the default `node-server` preset will fail to
 bundle Elysia, since Elysia has Bun-specific exports that will not be handled
 properly by the default preset:
