@@ -12,6 +12,8 @@
 
 ## Setup
 
+Requirements: Node v20+ or Bun v1
+
 Install the package:
 
 ```
