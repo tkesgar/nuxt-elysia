@@ -21,13 +21,14 @@
     "prepack": "nuxt-module-build build",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "dev": "nuxi dev playground",
+    "dev:bun": "bun --bun nuxi dev playground",
     "dev:build": "nuxi build playground",
+    "dev:build:bun": "NITRO_PRESET=bun nuxi build playground",
     "dev:start": "node playground/.output/server/index.mjs",
-    "bun:dev:build": "NITRO_PRESET=bun nuxi build playground",
-    "bun:dev:start": "bun playground/.output/server/index.mjs",
+    "dev:start:bun": "bun playground/.output/server/index.mjs",
     "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
+    "test": "vitest",
+    "test:bun": "bun test bun",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "@elysiajs/eden": "^1"
   },
   "devDependencies": {
+    "@elysiajs/node": "^1.2.6",
     "@elysiajs/swagger": "^1.2.2",
     "@nuxt/devtools": "^2.3.1",
     "@nuxt/eslint-config": "^1.2.0",
