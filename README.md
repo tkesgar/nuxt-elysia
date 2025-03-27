@@ -138,7 +138,6 @@ $ screenfetch
 
 Result:
 
-```
 | name        | framework | runtime | avg reqs/s | avg latency | throughput |
 | ----------- | --------- | ------- | ---------- | ----------- | ---------- |
 | api-json    | elysia    | bun     | 14704.61   | 8.50        | 3.27       |
@@ -153,7 +152,6 @@ Result:
 | nuxt-render | elysia    | node    | 665.51     | 186.77      | 1.12       |
 | nuxt-render | h3        | bun     | 1019.14    | 123.27      | 1.72       |
 | nuxt-render | h3        | node    | 929.24     | 133.59      | 1.63       |
-```
 
 Remarks:
 
