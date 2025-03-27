@@ -6,6 +6,10 @@ declare module 'nuxt/schema' {
     /** Additional configuration for `$api` (Eden Treaty) */
     treatyConfig?: Treaty.Config
   }
+  interface AppConfig {
+    /** Additional configuration for `$api` (Eden Treaty) */
+    treatyConfig?: Treaty.Config
+  }
 }
 
 type ElysiaApp = import('h3').H3EventContext['_elysiaApp']
