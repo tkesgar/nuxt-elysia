@@ -6,6 +6,7 @@ declare module 'nuxt/schema' {
     /** Additional configuration for `$api` (Eden Treaty) */
     treatyConfig?: Treaty.Config
   }
+
   interface AppConfig {
     /** Additional configuration for `$api` (Eden Treaty) */
     treatyConfig?: Treaty.Config
@@ -23,7 +24,7 @@ export default defineNuxtPlugin(() => {
     // In client-side: make the base URL from window origin + base URL + app path
     event?.context._elysiaApp ?? (() => {
       const runtimeConfig = useRuntimeConfig()
-      return window.location.origin + runtimeConfig.app.baseURL + '<% path %>'
+      return window.location.origin + runtimeConfig.app.baseURL + '<%= path.slice(1) %>'
     })(),
     appConfig.treatyConfig,
   )

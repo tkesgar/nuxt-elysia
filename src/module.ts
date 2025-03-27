@@ -1,5 +1,6 @@
-import fsp from 'node:fs/promises'
+import fs from 'node:fs'
 import { defineNuxtModule, createResolver, addServerPlugin, addPlugin, addTemplate, addTypeTemplate } from '@nuxt/kit'
+import ejs from 'ejs'
 import { name, version } from '../package.json'
 
 export interface ModuleOptions {
@@ -29,20 +30,6 @@ export interface ModuleOptions {
   treaty: boolean
 }
 
-async function renderTemplate(templatePath: string, data: Record<string, string>) {
-  const template = await fsp.readFile(templatePath, { encoding: 'utf-8' })
-  return template.replaceAll(/<%\s*\w+\s*%>/g, (pattern) => {
-    const key = pattern.slice(2, -2).trim()
-
-    const value = data[key]
-    if (typeof value === 'undefined') {
-      throw new TypeError(`Cannot find value '${key}' in template data`)
-    }
-
-    return value
-  })
-}
-
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name,
@@ -57,16 +44,18 @@ export default defineNuxtModule<ModuleOptions>({
   async setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
 
+    function renderTemplate<T extends ejs.Data>(name: string, data: T) {
+      const templatePath = resolver.resolve(`./runtime/templates/${name}.ejs`)
+      const template = fs.readFileSync(templatePath, { encoding: 'utf-8' })
+      return ejs.render(template, data)
+    }
+
     // Register types
     addTypeTemplate({
       filename: './nuxt-elysia/types.d.ts',
-      async getContents() {
-        const templatePath = resolver.resolve('./runtime/templates/types.template')
-        return renderTemplate(templatePath, {
-          module: _options.module,
-          path: _options.path,
-        })
-      },
+      getContents: () => renderTemplate('types', {
+        module: _options.module,
+      }),
       write: true,
     })
 
@@ -74,15 +63,13 @@ export default defineNuxtModule<ModuleOptions>({
     {
       const tmpl = addTemplate({
         filename: './nuxt-elysia/server-plugin.ts',
-        async getContents() {
-          const templatePath = resolver.resolve('./runtime/templates/server-plugin.template')
-          return renderTemplate(templatePath, {
-            module: _options.module,
-            path: _options.path,
-          })
-        },
+        getContents: () => renderTemplate('server-plugin', {
+          module: _options.module,
+          path: _options.path,
+        }),
         write: true,
       })
+
       addServerPlugin(tmpl.dst)
     }
 
@@ -90,14 +77,12 @@ export default defineNuxtModule<ModuleOptions>({
     if (_options.path && _options.treaty) {
       const tmpl = addTemplate({
         filename: './nuxt-elysia/client-plugin.ts',
-        async getContents() {
-          const templatePath = resolver.resolve('./runtime/templates/client-plugin.template')
-          return renderTemplate(templatePath, {
-            path: _options.path.slice(1),
-          })
-        },
+        getContents: () => renderTemplate('client-plugin', {
+          path: _options.path,
+        }),
         write: true,
       })
+
       addPlugin(tmpl.dst)
     }
   },

@@ -1,5 +1,5 @@
 import Elysia from 'elysia'
-import createElysiaApp from '<% module %>'
+import createElysiaApp from '<%= module %>'
 import { defineNitroPlugin } from 'nitropack/runtime'
 import { fromWebHandler } from 'h3'
 
@@ -14,7 +14,7 @@ export default defineNitroPlugin(async (nitroApp) => {
     event.context._elysiaApp = app
   })
 
-  const appPath = '<% path %>'
+  const appPath = '<%= path %>'
   if (appPath) {
     const wrappedApp = new Elysia({ prefix: appPath })
 
