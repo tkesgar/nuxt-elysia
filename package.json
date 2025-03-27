@@ -19,17 +19,16 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "release": "npm run lint && npm run test && npm run prepack && npm publish && git push --follow-tags",
+    "dev:start": "node playground/.output/server/index.mjs",
+    "bun:dev:build": "NITRO_PRESET=bun nuxi build playground",
+    "bun:dev:start": "bun playground/.output/server/index.mjs",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
-    "benchmark:dev": "nuxi dev test/fixtures/benchmark",
-    "benchmark:node": "nuxi build test/fixtures/benchmark && nuxi preview test/fixtures/benchmark",
-    "benchmark:bun": "NITRO_PRESET=bun nuxi build test/fixtures/benchmark && nuxi preview test/fixtures/benchmark"
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
     "@nuxt/kit": "^3.16.1"
