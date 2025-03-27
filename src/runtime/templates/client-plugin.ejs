@@ -19,6 +19,14 @@ export default defineNuxtPlugin(() => {
   const event = useRequestEvent()
   const appConfig = useAppConfig()
 
+  <% if (requestHeaders) { %>
+  const requestHeaders = useRequestHeaders([
+    <% for (const header of requestHeaders) { %>
+    '<%= header %>',
+    <% } %>
+  ])
+  <% } %>
+
   const api = treaty<ElysiaApp>(
     // In server-side: use _elysiaApp from event context
     // In client-side: make the base URL from window origin + base URL + app path
@@ -26,7 +34,13 @@ export default defineNuxtPlugin(() => {
       const runtimeConfig = useRuntimeConfig()
       return window.location.origin + runtimeConfig.app.baseURL + '<%= path.slice(1) %>'
     })(),
-    appConfig.treatyConfig,
+    {
+      headers: {
+        ...requestHeaders,
+        ...appConfig.treatyConfig?.headers,
+      },
+      ...appConfig.treatyConfig,
+    },
   )
 
   return {

@@ -42,6 +42,16 @@ export interface ModuleOptions {
    * Default: `true`
    */
   fixBunPlainTextResponse: boolean
+  /**
+   * Provides the list of request headers to be sent to the Elysia app on
+   * server-side requests.
+   *
+   * The default value is `['Cookie']`, which will pass all cookies sent by
+   * the browser to Elysia app.
+   *
+   * Default: ['Cookie']
+   */
+  treatyRequestHeaders: string[]
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -55,6 +65,7 @@ export default defineNuxtModule<ModuleOptions>({
     path: '/_api',
     treaty: true,
     fixBunPlainTextResponse: true,
+    treatyRequestHeaders: ['Cookie'],
   },
   async setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -95,6 +106,7 @@ export default defineNuxtModule<ModuleOptions>({
         filename: './nuxt-elysia/client-plugin.ts',
         getContents: () => renderTemplate('client-plugin', {
           path: _options.path,
+          requestHeaders: _options.treatyRequestHeaders,
         }),
         write: true,
       })

@@ -25,6 +25,9 @@ export default async () => {
         message: 'Hello world!',
       }
     })
+    .get('/secret-cookie', ({ cookie }) => {
+      return cookie.secret.value || '-'
+    })
 
   return app
 }

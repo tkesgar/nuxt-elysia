@@ -12,6 +12,8 @@
   - Full Eden Treaty features (end-to-end type safety, lightweight size)
   - **Isomorphic client**: Eden Treaty works in both server-side and client-
     side without additional configuration
+  - Pass headers sent by browser to Elysia app (the list of headers is
+    configurable)
 - **Works in both Node.js and Bun**
   - Run in Bun for maximum performance
   - Run in Node.js for better compatibility with some packages (while waiting
@@ -115,6 +117,29 @@ export interface ModuleOptions {
    * Default: `true`
    */
   treaty: boolean
+  /**
+   * When mounting the Elysia app in Bun, Elysia handler that returns a string
+   * will not have any `Content-Type` header:
+   *
+   * ```ts
+   * const app = new Elysia()
+   *   .get('/plaintext', () => 'Hello world!)
+   * ```
+   *
+   * This option adds a transform to add `Content-Type: text/plain`.
+   *
+   * Default: `true`
+   */
+  fixBunPlainTextResponse: boolean
+  /**
+   * Provides the list of request headers to be sent to the Elysia app.
+   *
+   * The default value is `['Cookie']`, which will pass all cookies sent by
+   * the browser to Elysia app.
+   *
+   * Default: ['Cookie']
+   */
+  treatyRequestHeaders: string[]
 }
 ```
 
