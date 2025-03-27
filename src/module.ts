@@ -47,11 +47,11 @@ export interface ModuleOptions {
    * server-side requests.
    *
    * The default value is `['Cookie']`, which will pass all cookies sent by
-   * the browser to Elysia app.
+   * the browser to Elysia app. Set to `false` to disable passing any headers.
    *
-   * Default: ['Cookie']
+   * Default: `['Cookie']`
    */
-  treatyRequestHeaders: string[]
+  treatyRequestHeaders: string[] | false
 }
 
 export default defineNuxtModule<ModuleOptions>({

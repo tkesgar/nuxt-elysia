@@ -1,5 +1,5 @@
 import { treaty, type Treaty } from '@elysiajs/eden'
-import { defineNuxtPlugin, useRequestEvent, useAppConfig, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useRequestEvent, useRequestHeaders, useAppConfig, useRuntimeConfig } from '#app'
 
 declare module 'nuxt/schema' {
   interface AppConfigInput {
@@ -19,7 +19,7 @@ export default defineNuxtPlugin(() => {
   const event = useRequestEvent()
   const appConfig = useAppConfig()
 
-  <% if (requestHeaders) { %>
+  <% if (requestHeaders && requestHeaders.length > 0) { %>
   const requestHeaders = useRequestHeaders([
     <% for (const header of requestHeaders) { %>
     '<%= header %>',
@@ -36,7 +36,9 @@ export default defineNuxtPlugin(() => {
     })(),
     {
       headers: {
+        <% if (requestHeaders && requestHeaders.length > 0) { %>
         ...requestHeaders,
+        <% } %>
         ...appConfig.treatyConfig?.headers,
       },
       ...appConfig.treatyConfig,

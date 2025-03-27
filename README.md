@@ -135,7 +135,7 @@ export interface ModuleOptions {
    * Provides the list of request headers to be sent to the Elysia app.
    *
    * The default value is `['Cookie']`, which will pass all cookies sent by
-   * the browser to Elysia app.
+   * the browser to Elysia app. Set to `false` to disable passing any headers.
    *
    * Default: ['Cookie']
    */
