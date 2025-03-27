@@ -18,11 +18,13 @@ export default defineNitroPlugin(async (nitroApp) => {
   if (appPath) {
     const wrappedApp = new Elysia({ prefix: appPath })
 
-    // Fix missing Content-Type header when running the app in Bun and the
-    // response is a string
+    // Fix missing Content-Type header when:
+    // - Running the app in Bun
+    // - The response is a string
+    // - Content-Type is not provided
     if (isBun) {
       wrappedApp.onAfterHandle(({ response, set }) => {
-        if (typeof response === 'string') {
+        if (typeof response === 'string' && !set.headers['content-type']) {
           set.headers['content-type'] = 'text/plain;charset=utf-8'
         }
       })

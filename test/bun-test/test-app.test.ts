@@ -42,9 +42,27 @@ describe('/plaintext', () => {
 })
 
 describe('/html', () => {
-  it.todo('should have the same response between Bun.serve and Nuxt app')
+  it('should have the same response between Bun.serve and Nuxt app', async () => {
+    const [nuxtResponse, bunResponse] = await Promise.all([
+      fetch('http://localhost:3000/_api/html'),
+      fetch('http://localhost:3001/html'),
+    ])
+
+    expect(nuxtResponse.status).toEqual(bunResponse.status)
+    expect(nuxtResponse.headers).toEqual(bunResponse.headers)
+    expect(await nuxtResponse.text()).toEqual(await bunResponse.text())
+  })
 })
 
 describe('/json', () => {
-  it.todo('should have the same response between Bun.serve and Nuxt app')
+  it('should have the same response between Bun.serve and Nuxt app', async () => {
+    const [nuxtResponse, bunResponse] = await Promise.all([
+      fetch('http://localhost:3000/_api/json'),
+      fetch('http://localhost:3001/json'),
+    ])
+
+    expect(nuxtResponse.status).toEqual(bunResponse.status)
+    expect(nuxtResponse.headers).toEqual(bunResponse.headers)
+    expect(await nuxtResponse.json()).toEqual(await bunResponse.json())
+  })
 })
