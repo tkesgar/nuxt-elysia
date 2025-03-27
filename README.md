@@ -108,6 +108,62 @@ export interface ModuleOptions {
 
 ## Notes
 
+### Benchmark
+
+The benchmark Nuxt app is available in `test/fixtures/benchmark`.
+
+We run the tests using `bombardier` on the following machine:
+
+```
+$ screenfetch
+                          ./+o+-       tkesgar@tkesgar-ideapad
+                  yyyyy- -yyyyyy+      OS: Ubuntu 24.04 noble(on the Windows Subsystem for Linux)
+               ://+//////-yyyyyyo      Kernel: x86_64 Linux 5.15.167.4-microsoft-standard-WSL2
+           .++ .:/++++++/-.+sss/`      Uptime: 1h 16m
+         .:++o:  /++++++++/:--:/-      Packages: 581
+        o:+o+:++.`..```.-/oo+++++/     Shell: bash 5.2.21
+       .:+o:+o/.          `+sssoo+/    Resolution: No X Server
+  .++/+:+oo+o:`             /sssooo.   WM: Not Found
+ /+++//+:`oo+o               /::--:.   GTK Theme: Adwaita [GTK3]
+ \+/+o+++`o++o               ++////.   Disk: 424G / 1.7T (27%)
+  .++.o+++oo+:`             /dddhhh.   CPU: 13th Gen Intel Core i5-1335U @ 12x 2.496GHz
+       .+.o+oo:.          `oddhhhh+    RAM: 4426MiB / 7807MiB
+        \+.++o+o``-````.:ohdhhhhh+
+         `:o+++ `ohhhhhhhhyo++os:
+           .o:`.syhhhhhhh/.oo++o`
+               /osyyyyyyo++ooo+++/
+                   ````` +oo+++o\:
+                          `oo++.
+```
+
+Result:
+
+```
+| name        | framework | runtime | avg reqs/s | avg latency | throughput |
+| ----------- | --------- | ------- | ---------- | ----------- | ---------- |
+| api-json    | elysia    | bun     | 14704.61   | 8.50        | 3.27       |
+| api-json    | elysia    | node    | 7003.07    | 17.92       | 1.88       |
+| api-json    | h3        | bun     | 14084.20   | 8.87        | 2.93       |
+| api-json    | h3        | node    | 15987.32   | 7.82        | 4.04       |
+| api-text    | elysia    | bun     | 13556.04   | 9.22        | 2.57       |
+| api-text    | elysia    | node    | 8009.46    | 15.59       | 2.02       |
+| api-text    | h3        | bun     | 17536.14   | 7.13        | 3.06       |
+| api-text    | h3        | node    | 15498.33   | 8.06        | 3.40       |
+| nuxt-render | elysia    | bun     | 1173.03    | 107.59      | 1.90       |
+| nuxt-render | elysia    | node    | 665.51     | 186.77      | 1.12       |
+| nuxt-render | h3        | bun     | 1019.14    | 123.27      | 1.72       |
+| nuxt-render | h3        | node    | 929.24     | 133.59      | 1.63       |
+```
+
+Remarks:
+
+- Prefer running the Nuxt app in Bun instead of Node.js if possible.
+- There is no performance benefit from using Elysia instead of H3 in Node.js;
+  in fact, there is noticeable slowdown due to the native Response overhead
+  (H3 directly works with the native HTTP payload).
+- There is no noticeable performance issue with the server-side API client
+  (Elysia: Eden Treaty, Nitro: mock ofetch).
+
 ### Known quirks
 
 Because nuxt-elysia mounts Elysia as a handler for H3 application instead of

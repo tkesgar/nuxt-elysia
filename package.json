@@ -26,7 +26,10 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+    "benchmark:dev": "nuxi dev test/fixtures/benchmark",
+    "benchmark:node": "nuxi build test/fixtures/benchmark && nuxi preview test/fixtures/benchmark",
+    "benchmark:bun": "NITRO_PRESET=bun nuxi build test/fixtures/benchmark && nuxi preview test/fixtures/benchmark"
   },
   "dependencies": {
     "@nuxt/kit": "^3.16.1"
