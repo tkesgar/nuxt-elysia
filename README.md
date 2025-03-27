@@ -167,17 +167,14 @@ Remarks:
 ### Known quirks
 
 Because nuxt-elysia mounts Elysia as a handler for H3 application instead of
-directly handling the HTTP request, there may be several quirks in the
+directly handling the HTTP request, there may be several quirks that we need to
+fix with additional wrappers and transforms. You can check `server-plugin.ts`
+generated from `server-plugin.template` for the list of currently implemented
+workarounds:
 
-Our goal is for the following implementations to work the same ,i.e. returning
-matching HTTP headers and responses:
-
-1. Elysia app run directly in Bun server
-2. Elysia app internal request (via `Elysia.handle`)
-3. Elysia app external request (via `/_api` endpoint)
-
-You can check `server-plugin.ts` generated from `server-plugin.template` for
-the list of currently implemented workarounds.
+Our goal is to ensure the same results between mounting the Elysia app and
+running the Elysia app as separate server (directly in Bun or running in Node.js
+via `@elysiajs/node` adapter).
 
 ### `module` option
 
