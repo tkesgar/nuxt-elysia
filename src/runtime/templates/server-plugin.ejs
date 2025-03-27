@@ -18,10 +18,13 @@ export default defineNitroPlugin(async (nitroApp) => {
   if (appPath) {
     const wrappedApp = new Elysia({ prefix: appPath })
 
-    // Fix missing Content-Type header when:
-    // - Running the app in Bun
-    // - The response is a string
-    // - Content-Type is not provided
+    <%#
+      Fix missing Content-Type header when:
+        - Running the app in Bun
+        - The response is a string
+        - Content-Type is not provided
+    %>
+    <% if (fixBunPlainTextResponse) { %>
     if (isBun) {
       wrappedApp.onAfterHandle(({ response, set }) => {
         if (typeof response === 'string' && !set.headers['content-type']) {
@@ -29,15 +32,18 @@ export default defineNitroPlugin(async (nitroApp) => {
         }
       })
     }
+    <% } %>
 
     wrappedApp.use(app)
 
     nitroApp.h3App.stack.unshift({
       route: appPath,
-      // TODO See if Elysia can be configured to not return a response
-      // If the handle does not return a response, h3 will move to the next route in stack.
-      // If we can do this then we can register Elysia as '/' route
-      // https://h3.unjs.io/guide/app#registering-event-handlers
+      <%#
+        TODO See if Elysia can be configured to not return a response
+        If the handle does not return a response, h3 will move to the next route in stack.
+        If we can do this then we can register Elysia as '/' route
+        https://h3.unjs.io/guide/app#registering-event-handlers
+      %>
       handler: fromWebHandler(wrappedApp.handle),
     })
   }

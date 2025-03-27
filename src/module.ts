@@ -28,6 +28,20 @@ export interface ModuleOptions {
    * Default: `true`
    */
   treaty: boolean
+  /**
+   * When mounting the Elysia app in Bun, Elysia handler that returns a string
+   * will not have any `Content-Type` header:
+   *
+   * ```ts
+   * const app = new Elysia()
+   *   .get('/plaintext', () => 'Hello world!)
+   * ```
+   *
+   * This option adds a transform to add `Content-Type: text/plain`.
+   *
+   * Default: `true`
+   */
+  fixBunPlainTextResponse: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -40,6 +54,7 @@ export default defineNuxtModule<ModuleOptions>({
     module: '~~/api',
     path: '/_api',
     treaty: true,
+    fixBunPlainTextResponse: true,
   },
   async setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -66,6 +81,7 @@ export default defineNuxtModule<ModuleOptions>({
         getContents: () => renderTemplate('server-plugin', {
           module: _options.module,
           path: _options.path,
+          fixBunPlainTextResponse: _options.fixBunPlainTextResponse,
         }),
         write: true,
       })
