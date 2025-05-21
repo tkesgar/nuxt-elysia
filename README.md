@@ -62,7 +62,7 @@ Create `api.ts` in the project root:
 
 ```ts
 export default () => new Elysia()
-  .get('/hello', () => ({ message: 'Hello world!' })
+  .get('/hello', () => ({ message: 'Hello world!' }))
 ```
 
 Use in Vue app:
