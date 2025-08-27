@@ -162,8 +162,10 @@ currently implemented workarounds.
 Our goal is to ensure the exact same result between mounting the Elysia app
 and running the Elysia app as separate server in Node.js.
 
-> Note that we do not fully support running Nuxt on Bun yet. While it might
-> work as expected, we do not currently run test suites for it.
+> Note that there are currently issues when running `bun --bun nuxi dev`
+> (running Nuxt development mode in Bun) that does not happen in production
+> builds. See [https://github.com/tkesgar/nuxt-elysia/issues/2] for more
+> details.
 
 ### `module` option
 
