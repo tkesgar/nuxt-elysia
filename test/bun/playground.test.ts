@@ -28,7 +28,8 @@ describe('/plaintext', () => {
 
     expect(nuxtResponse.status).toEqual(bunResponse.status)
     expect(await nuxtResponse.text()).toEqual(await bunResponse.text())
-    expect(nuxtResponse.headers.get('content-type')).toEqual(bunResponse.headers.get('content-type'))
+    expect(nuxtResponse.headers.get('content-type')).toInclude('text/plain')
+    expect(nuxtResponse.headers.get('content-type')).toMatch(/charset=utf-8/i) // casing for utf-8 is inconsistent but should not be relevant
   })
 })
 
