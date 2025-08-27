@@ -27,8 +27,16 @@ describe('/plaintext', () => {
     ])
 
     expect(nuxtResponse.status).toEqual(bunResponse.status)
-    expect(await nuxtResponse.text()).toEqual(await bunResponse.text())
-    expect(nuxtResponse.headers.get('content-type')).toEqual(bunResponse.headers.get('content-type'))
+
+    const [text, expectedText] = await Promise.all([
+      nuxtResponse.text(),
+      bunResponse.text(),
+    ])
+    expect(text).toEqual(expectedText)
+
+    const contentType = nuxtResponse.headers.get('content-type')
+    const expectedContentType = bunResponse.headers.get('content-type')
+    expect(contentType).toEqual(expectedContentType)
   })
 })
 
@@ -40,8 +48,16 @@ describe('/html', () => {
     ])
 
     expect(nuxtResponse.status).toEqual(bunResponse.status)
-    expect(await nuxtResponse.text()).toEqual(await bunResponse.text())
-    expect(nuxtResponse.headers.get('content-type')).toEqual(bunResponse.headers.get('content-type'))
+
+    const [text, expectedText] = await Promise.all([
+      nuxtResponse.text(),
+      bunResponse.text(),
+    ])
+    expect(text).toEqual(expectedText)
+
+    const contentType = nuxtResponse.headers.get('content-type')
+    const expectedContentType = bunResponse.headers.get('content-type')
+    expect(contentType).toEqual(expectedContentType)
   })
 })
 
@@ -53,6 +69,11 @@ describe('/json', () => {
     ])
 
     expect(nuxtResponse.status).toEqual(bunResponse.status)
-    expect(await nuxtResponse.json()).toEqual(await bunResponse.json())
+
+    const [body, expectedBody] = await Promise.all([
+      nuxtResponse.json(),
+      bunResponse.json(),
+    ])
+    expect(body).toEqual(expectedBody)
   })
 })
