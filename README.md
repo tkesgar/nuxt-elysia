@@ -154,14 +154,16 @@ export interface ModuleOptions {
 ### Known quirks
 
 Because nuxt-elysia mounts Elysia as a handler for H3 application instead of
-directly handling the HTTP request, there may be several quirks that we need to
-fix with additional wrappers and transforms. You can check `server-plugin.ts`
-generated from `server-plugin.template` for the list of currently implemented
-workarounds.
+directly handling the HTTP request, there may be several subtle quirks that we
+need to fix with additional wrappers and transforms. You can check
+`server-plugin.ts` generated from `server-plugin.template` for the list of
+currently implemented workarounds.
 
-Our goal is to ensure the same results between mounting the Elysia app and
-running the Elysia app as separate server (directly in Bun or running in Node.js
-via `@elysiajs/node` adapter).
+Our goal is to ensure the exact same result between mounting the Elysia app
+and running the Elysia app as separate server in Node.js.
+
+> Note that we do not fully support running Nuxt on Bun yet. While it might
+> work as expected, we do not currently run test suites for it.
 
 ### `module` option
 
