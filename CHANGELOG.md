@@ -1,3 +1,9 @@
+# 1.0.0-beta
+
+- BREAKING: Drop support for Node 22
+- Update dependencies to use Nuxt 4 packages (e.g. `@nuxt/kit`)
+- Add package provenance statements
+
 # 0.2.0 (2025-03-27)
 
 - New options:
