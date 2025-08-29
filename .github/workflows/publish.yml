@@ -19,6 +19,11 @@ jobs:
       - run: npm install -g bun
       - run: bun install
       - run: bun dev:prepare
-      - run: npm publish --provenance --access public
+      - if: ${{ github.event.release.prerelease }}
+        run: npm publish --provenance --access public --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - if: ${{ !github.event.release.prerelease }}
+        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
