@@ -1,4 +1,4 @@
-# 1.0.0-beta
+# 1.0.0-beta.1 (2025-08-30)
 
 - BREAKING: Drop support for Node 22
 - Update dependencies to use Nuxt 4 packages (e.g. `@nuxt/kit`)
