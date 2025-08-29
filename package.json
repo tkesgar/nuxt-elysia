@@ -1,6 +1,6 @@
 {
   "name": "nuxt-elysia",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta.1",
   "description": "Mount Elysia app in Nuxt",
   "repository": "tkesgar/nuxt-elysia",
   "license": "MIT",
