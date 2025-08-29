@@ -54,3 +54,14 @@ jobs:
       - run: pm2 start bun -- dev:start:bun && sleep 1
       - run: bun test:bun
       - run: pm2 stop all
+
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - run: bun install
+      - run: bun dev:prepare
+      - run: npm pack
