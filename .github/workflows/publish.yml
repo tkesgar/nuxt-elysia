@@ -7,6 +7,7 @@ on:
 
 jobs:
   publish:
+    if: ${{ !github.event.release.prerelease }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -16,14 +17,28 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
+          registry-url: https://registry.npmjs.org
       - run: npm install -g bun
       - run: bun install
       - run: bun dev:prepare
-      - if: ${{ github.event.release.prerelease }}
-        run: npm publish --provenance --access public --tag next
+      - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - if: ${{ !github.event.release.prerelease }}
-        run: npm publish --provenance --access public
+  publish-beta:
+    if: ${{ github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g bun
+      - run: bun install
+      - run: bun dev:prepare
+      - run: npm publish --provenance --access public --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
