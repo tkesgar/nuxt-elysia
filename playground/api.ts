@@ -28,6 +28,13 @@ export default async () => {
     .get('/secret-cookie', ({ cookie }) => {
       return cookie.secret?.value || '-'
     })
+    .get('/complex-json', () => {
+      return {
+        randomNumber: Math.random(),
+        uuid: crypto.randomUUID(),
+        date: new Date(),
+      }
+    })
 
   return app
 }

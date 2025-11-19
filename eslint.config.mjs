@@ -16,5 +16,11 @@ export default createConfigForNuxt({
   },
 })
   .append(
-    // your custom flat config here...
+    {
+      files: ['playground/app/**/*.vue'],
+      rules: {
+        // Allow single word names (e.g. index.vue) in app/
+        'vue/multi-word-component-names': 'off',
+      },
+    },
   )
