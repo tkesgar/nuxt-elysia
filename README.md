@@ -151,6 +151,93 @@ export interface ModuleOptions {
 
 ## Notes
 
+### Elysia app factory
+
+The Elysia app module in `api.ts` must exports a default function that returns
+an Elysia app instance:
+
+```ts
+export default function () {
+  return new Elysia()
+    // ...
+}
+```
+
+You can also exports a function that resolves with an Elysia app instance (i.e.
+async function):
+
+```ts
+export default async function () {
+  return new Elysia()
+    // ...
+}
+```
+
+The app factory function will be called inside Nitro plugin context, so you can
+use some Nitro utilities if necessary (refer to Nitro documentation for more
+details):
+
+```ts
+import * as schema from '../db-schema'
+
+export default async function () {
+  const runtimeConfig = useRuntimeConfig()
+
+  const db = drizzle(runtimeConfig.db.url, { schema })
+  return new Elysia()
+    .decorate('db', db)
+    // ...
+}
+```
+
+If you need to organize your Elysia app in multiple files, you can use
+`/api/index.ts` instead of `/api.ts` and create your Elysia app directory
+structure there:
+
+```
+api
+├── index.ts <-- nuxt-elysia entry point
+├── plugins
+│   ├── db.ts
+│   └── auth.ts
+└── routes
+    ├── oauth.ts
+    ├── admin.ts
+    └── user.ts
+```
+
+Alternatively, you can also move the Elysia app module somewhere else and
+specify it via `module` option:
+
+```
+my-api-app
+├── app.ts <-- nuxt-elysia entry point
+├── ...
+...
+```
+
+```ts
+export default defineNuxtConfig({
+  modules: ['nuxt-elysia'],
+  nuxtElysia: {
+    module: '~~/my-api-app/app'
+  }
+})
+```
+
+Internally, Nuxt Elysia uses dynamic `import()` to load the module, so in theory
+you can also import Elysia app from other packages (although I have not tried
+this):
+
+```ts
+export default defineNuxtConfig({
+  modules: ['nuxt-elysia'],
+  nuxtElysia: {
+    module: '@my-project/my-api-app'
+  }
+})
+```
+
 ### Known quirks
 
 Because nuxt-elysia mounts Elysia as a handler for H3 application instead of
