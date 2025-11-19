@@ -1,4 +1,5 @@
 import { Elysia } from 'elysia'
+import complexJsonApp from './complex-json'
 
 export default async () => {
   const app = new Elysia()
@@ -28,13 +29,7 @@ export default async () => {
     .get('/secret-cookie', ({ cookie }) => {
       return cookie.secret?.value || '-'
     })
-    .get('/complex-json', () => {
-      return {
-        randomNumber: Math.random(),
-        uuid: crypto.randomUUID(),
-        date: new Date(),
-      }
-    })
+    .use(complexJsonApp())
 
   return app
 }
