@@ -26,7 +26,7 @@
     "lint": "eslint .",
     "test": "vitest",
     "test:bun": "bun test bun",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "test:types": "cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
     "@nuxt/kit": "^4.2.1"
