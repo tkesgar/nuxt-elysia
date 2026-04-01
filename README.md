@@ -55,11 +55,12 @@ export default defineNuxtConfig({
     // ...
 	  'nuxt-elysia'
   ],
+  // ...
   nuxtElysia: {
-    path: '/api',
+    path: '/my-api-app',
   },
   nitro: {
-    preset: 'Bun'
+    preset: 'bun'
   }
 })
 ```
@@ -327,9 +328,9 @@ uses Node.js (if both Node.js and Bun are available). Therefore, you need to add
 ```json
 {
   "scripts": {
-    "dev": "nuxt --bun dev",
-    "build": "nuxt --bun build",
-    "preview": "nuxt --bun preview"
+    "dev": "bun --bun nuxt dev",
+    "build": "bun --bun nuxt build",
+    "preview": "bun --bun nuxt preview"
   }
 }
 ```
